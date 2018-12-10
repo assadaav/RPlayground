@@ -1,0 +1,12 @@
+name: ShinyApp
+title: ShinyApp
+username:
+account: assadaav
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 611591
+bundleId: 1752197
+url: https://assadaav.shinyapps.io/ShinyApp/
+when: 1544426860.55252
+asMultiple: FALSE
+asStatic: FALSE

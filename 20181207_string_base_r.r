@@ -77,9 +77,9 @@ gsub(".","0", myString)
 gsub(".","0", myString, fixed = T) # fixed: regular expression (default) or string
 
 # find
-grepl("ember", myString) # exist?
+grepl("ember", myString) # array of T/F
 grep("ember", myString) # which? (indices)
-grep("ember", myString, value = T) # which? (indices)
+grep("ember", myString, value = T) # which? (value)
 regexpr("a", myString) # where is the first?
 gregexpr("a", myString) # where is everyone?
 

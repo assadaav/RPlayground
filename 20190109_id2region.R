@@ -56,7 +56,7 @@ df_output$身份证号 <- paste0("'", df_output$身份证号)
 temp_cities <- unique(df_output$"二级")
 for (i in 1:length(temp_cities)) {
   temp_df <- filter(df_output, df_output$"二级" == temp_cities[i])
-  write_file(temp_df, col.names = FALSE,
-            file = paste0("output/",i, temp_cities[i], dim(temp_df)[1], ".csv"))
+  write_excel_csv(temp_df,
+            path = paste0("output/",i, temp_cities[i], dim(temp_df)[1], ".csv"))
 }
 

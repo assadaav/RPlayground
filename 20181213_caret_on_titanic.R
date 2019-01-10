@@ -3,28 +3,30 @@ library(caret)
 library(recipes)
 library(tidymodels)
 
-# This is an implementation of package caret on the classic dataset titanic.
-# Data retrieved from Kaggle.
+## This is an implementation of package caret on the classic dataset titanic.
+## Data retrieved from Kaggle.
 
 df_input <- read_csv('titanic_train.csv')
 df_task <- read_csv('titanic_test.csv')
 
+###############################################################################
+# Feature analysis and recode
 df_task['Survived'] <- NA
 
 input_index <- df_input$PassengerId
 input_max <- max(df_input$PassengerId)
 df_all <- rbind(df_input, df_task)
 
-# Pclass
+## Pclass
 table(df_all$Pclass)
 
-# Name
+## Name
 sample(df_all$Name, 10)
 df_all <- mutate(df_all, 
                  Title = gsub('(.*, )|(\\..*)', '', Name), # Extract titles from Name
                  Surname = gsub(',.*', '', df_all$Name))   # Extract surnames from Name
 sort(table(df_all$Title), decreasing = T)
-## Extract title from name
+### Extract title from name
 rare_title <- c('Dona', 'Lady', 'the Countess','Capt', 'Col', 'Don', 
                 'Dr', 'Major', 'Rev', 'Sir', 'Jonkheer')
 
@@ -33,34 +35,34 @@ df_all$Title[df_all$Title == 'Ms']          <- 'Miss'
 df_all$Title[df_all$Title == 'Mme']         <- 'Mrs' 
 df_all$Title[df_all$Title %in% rare_title]  <- 'Rare Title'
 
-# Sex
+## Sex
 table(df_all$Sex)
 ## 1 time more men than women
 
-# Age
+## Age
 hist(df_all$Age)
 sum(df_all$Age <= 16, na.rm = T)
-## 134 children on titanic
+### 134 children on titanic
 sum(df_all$Age >= 60, na.rm = T)
-## and 40 elders
+### and 40 elders
 
-# SibSp
+## SibSp
 hist(df_all$SibSp)
 table(df_all$SibSp)
-## mutual relation unknown, but Sibsp=5 should be in the same
-## familiy, so is Sibsp==8
+### mutual relation unknown, but Sibsp=5 should be in the same
+### familiy, so is Sibsp==8
 df_all[df_all$SibSp==8,]
 ## Sage family
 df_all[df_all$SibSp==5,]
-## ..and Goodwin family
+### ..and Goodwin family
 
-# Parch
+## Parch
 hist(df_all$Parch)
 table(df_all$Parch)
 df_all[df_all$Parch==9,]
-## Again, tragical Sage Family
+### Again, tragical Sage Family
 df_all[df_all$Parch==6,]
-## ..and Goodwin family
+### ..and Goodwin family
 
 df_all$family_Size <- df_all$SibSp + df_all$Parch + 1
 df_all$is_Single <- ifelse(df_all$family_Size==1, TRUE, FALSE)
@@ -90,31 +92,32 @@ df_all$check <- NULL
 
 df_all$family_SurvRate <- df_all$family_Survived / df_all$family_Known
 
-# Ticket
+## Ticket
 sample(df_all$Ticket, 10)
 table(gsub('[0-9]*','', df_all$Ticket))
-## ... seems hard to understand
+### ... seems hard to understand
 
-# Fare
+## Fare
 hist(df_all$Fare)
 ## likely to highly colinear with Pclass
 
-# Cabin
+## Cabin
 sample(df_all$Cabin, 10)
 sum(is.na(df_all$Cabin))
-## ... seems to be with too many missing values
+### ... seems to be with too many missing values
 table(gsub('[0-9]*','', df_all$Cabin))
 ## Seems that some people changed their cabin
-## For convenience, only the first cabin letter was preserved.
+### For convenience, only the first cabin letter was preserved.
 df_all <- mutate(df_all, Cab_Lev = substr(gsub('[0-9]*','', Cabin), 1,1))
 table(df_all$Cab_Lev)
 rare_cab <- c('G', 'T')
 df_all$Cab_Lev[df_all$Cab_Lev %in% rare_cab] <- 'R'
 
-# Embarked
+## Embarked
 table(df_all$Embarked)
-## Port of Embarkation. Doesn't sound quite predictive.
+### Port of Embarkation. Doesn't sound quite predictive.
 
+------------------------------------------------------------------------
 # Preprocess
 df_input <- df_all[input_index,]
 df_task <- df_all[-input_index,]
